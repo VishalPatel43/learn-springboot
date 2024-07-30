@@ -6,8 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IntroductionToSpringBootApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IntroductionToSpringBootApplication.class, args);
-	}
+    public static void main(String[] args) {
+
+        Apple apple = new Apple();
+        apple.eatApple();
+
+        SpringApplication.run(IntroductionToSpringBootApplication.class, args);
+    }
 
 }
