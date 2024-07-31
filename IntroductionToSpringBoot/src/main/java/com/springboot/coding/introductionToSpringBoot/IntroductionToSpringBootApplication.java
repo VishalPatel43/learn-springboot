@@ -39,5 +39,8 @@ public class IntroductionToSpringBootApplication implements CommandLineRunner {
 
         obj1.eatApple();
         obj2.eatApple();
+
+        System.out.println(obj1.hashCode());
+        System.out.println(obj2.hashCode());
     }
 }

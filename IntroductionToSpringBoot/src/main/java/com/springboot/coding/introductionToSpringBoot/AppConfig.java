@@ -2,6 +2,7 @@ package com.springboot.coding.introductionToSpringBoot;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 // explicitly define the bean and configure
 @Configuration
@@ -12,6 +13,8 @@ public class AppConfig {
 
     // default is singleton scope, we use 90% of the time
     @Bean
+    @Scope("singleton") // define the scope of the object (default is singleton), create the object only once
+//    @Scope("prototype") // create the new object every time
     Apple getApple() { // define the factory method to create the object of the class
         return new Apple();
     }
