@@ -1,6 +1,7 @@
 package com.springboot.coding.introductionToSpringBoot;
 
 import com.springboot.coding.introductionToSpringBoot.bean.Apple;
+import com.springboot.coding.introductionToSpringBoot.di.DBService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,11 +23,14 @@ public class IntroductionToSpringBootApplication implements CommandLineRunner {
 //        this.obj = obj;
 //    }
 
-    @Autowired
-    Apple obj1;
+//    @Autowired
+//    Apple obj1;
+//
+//    @Autowired
+//    Apple obj2;
 
     @Autowired
-    Apple obj2;
+    DBService dbService;
 
     public static void main(String[] args) {
 
@@ -38,10 +42,13 @@ public class IntroductionToSpringBootApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 //        obj.eatApple();
 
-        obj1.eatApple();
-        obj2.eatApple();
+//        obj1.eatApple();
+//        obj2.eatApple();
+//
+//        System.out.println(obj1.hashCode());
+//        System.out.println(obj2.hashCode());
 
-        System.out.println(obj1.hashCode());
-        System.out.println(obj2.hashCode());
+        System.out.println(dbService.getData());
+
     }
 }

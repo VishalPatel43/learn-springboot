@@ -12,8 +12,9 @@ public class AppConfig {
     // but DI is done by the spring
 
     // default is singleton scope, we use 90% of the time
-    @Bean
-    @Scope("singleton") // define the scope of the object (default is singleton), create the object only once
+    @Bean // if we use Apple or not but the object will be created
+    @Scope("singleton")
+    // define the scope of the object (default is singleton), create the object only once
 //    @Scope("prototype") // create the new object every time
     Apple getApple() { // define the factory method to create the object of the class
         return new Apple();
