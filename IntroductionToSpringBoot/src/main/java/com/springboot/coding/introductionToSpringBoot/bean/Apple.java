@@ -1,17 +1,15 @@
-package com.springboot.coding.introductionToSpringBoot;
+package com.springboot.coding.introductionToSpringBoot.bean;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 // @Component // this annotation is used to create the object of the class,
 // notified to the spring that this is the class which is going to be used as a bean
 //@Scope("singleton") // define the scope of the object (default is singleton), create the object only once
 //@Scope("prototype") // create the new object every time
- public class Apple {
+public class Apple {
 
-    void eatApple() {
+    public void eatApple() {
         System.out.println("I am eating the apple");
     }
 

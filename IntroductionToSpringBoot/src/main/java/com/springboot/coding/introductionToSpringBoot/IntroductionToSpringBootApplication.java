@@ -1,5 +1,6 @@
 package com.springboot.coding.introductionToSpringBoot;
 
+import com.springboot.coding.introductionToSpringBoot.bean.Apple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

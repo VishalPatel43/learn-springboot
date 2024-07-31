@@ -1,4 +1,4 @@
-package com.springboot.coding.introductionToSpringBoot;
+package com.springboot.coding.introductionToSpringBoot.bean;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
