@@ -8,10 +8,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IntroductionToSpringBootApplication implements CommandLineRunner {
 
-    @Autowired // this annotation is used to inject the object of the class
-    // inject the dependency of Apple inside Spring boot Bean
-    // field injection
-    Apple obj;
+//    @Autowired // this annotation is used to inject the object of the class
+//    // inject the dependency of Apple inside Spring boot Bean
+//    // field injection
+//    Apple obj;
+
+    // use the constructor injection
+    final Apple obj;
+
+    @Autowired
+    public IntroductionToSpringBootApplication(Apple obj) {
+        this.obj = obj;
+    }
 
     public static void main(String[] args) {
 
