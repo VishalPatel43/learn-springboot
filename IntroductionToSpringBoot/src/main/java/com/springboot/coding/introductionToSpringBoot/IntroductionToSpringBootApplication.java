@@ -13,13 +13,19 @@ public class IntroductionToSpringBootApplication implements CommandLineRunner {
 //    // field injection
 //    Apple obj;
 
-    // use the constructor injection
-    final Apple obj;
+//    // use the constructor injection
+//    final Apple obj;
+//
+//    @Autowired
+//    public IntroductionToSpringBootApplication(Apple obj) {
+//        this.obj = obj;
+//    }
 
     @Autowired
-    public IntroductionToSpringBootApplication(Apple obj) {
-        this.obj = obj;
-    }
+    Apple obj1;
+
+    @Autowired
+    Apple obj2;
 
     public static void main(String[] args) {
 
@@ -29,7 +35,9 @@ public class IntroductionToSpringBootApplication implements CommandLineRunner {
     // non-static method we can use the coz we don't want to create the object of the class
     @Override
     public void run(String... args) throws Exception {
-        obj.eatApple();
+//        obj.eatApple();
 
+        obj1.eatApple();
+        obj2.eatApple();
     }
 }
