@@ -18,7 +18,7 @@ public class IntroductionToSpringBootApplication implements CommandLineRunner {
 
 //    // use the constructor injection
 //    final Apple obj;
-//
+
 //    @Autowired
 //    public IntroductionToSpringBootApplication(Apple obj) {
 //        this.obj = obj;
