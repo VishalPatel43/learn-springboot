@@ -7,7 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+// where spring boot application starts
+@SpringBootApplication // this annotation is used to enable the auto-configuration feature of the spring boot
 public class IntroductionToSpringBootApplication implements CommandLineRunner {
 
 //    @Autowired // this annotation is used to inject the object of the class
