@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @RestController
 //@RequestMapping("/employees")
-@RequestMapping(path = "/employees")
+@RequestMapping(path = "/test/employees")
 
 
 // @PathVariable and @RequestParam we pass the data (variable) in the URL
