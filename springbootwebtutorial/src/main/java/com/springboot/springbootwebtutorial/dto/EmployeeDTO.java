@@ -1,11 +1,10 @@
 package com.springboot.springbootwebtutorial.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.springboot.springbootwebtutorial.annotations.EmployeeRoleValidation;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
-
 
 // In DTO we can add certain validations and constraints that we want to apply on the data that we are receiving from the client.
 // We put just the data that we want to send to the client and ignore like password etc.
@@ -17,11 +16,43 @@ import java.time.LocalDate;
 @Setter
 public class EmployeeDTO {
 
-    Long id;
-    String name;
-    String email;
-    Integer age;
-    LocalDate dateOfJoining;
-//    @JsonProperty("isActive")
-    Boolean isActive; // we can give any name
+    private Long id;
+
+    //    @NotNull
+    //    @NotNull(message = "Name cannot be null") // message is optional
+//    @NotNull(message = "Required field in Employee: name")
+//    @NotEmpty(message = "Name of the Employee cannot be empty")
+    @NotBlank(message = "Name of the employee cannot be blank")
+    @Size(min = 3, max = 10, message = "Number of characters in name should be in the range: [3, 10]")
+    private String name;
+
+    @NotBlank(message = "Email of the employee cannot be blank")
+    @Email(message = "Email should be a valid email")
+    private String email;
+
+    @NotNull(message = "Age of the employee cannot be blank")
+    @Max(value = 80, message = "Age of Employee cannot be greater than 80")
+    @Min(value = 18, message = "Age of Employee cannot be less than 18")
+    private Integer age;
+
+    @NotBlank(message = "Role of the employee cannot be blank")
+//    @Pattern(regexp = "^(ADMIN|USER)$", message = "Role of Employee can either be USER or ADMIN")
+    @EmployeeRoleValidation
+    private String role; //ADMIN, USER
+
+    @NotNull(message = "Salary of Employee should be not null")
+    @Positive(message = "Salary of Employee should be positive")
+    @Digits(integer = 6, fraction = 2, message = "The salary can be in the form XXXXXX.YY")
+    // max 6 digits and 2 decimal places
+    @DecimalMax(value = "1000000")
+    @DecimalMin(value = "100")
+    private Double salary;
+
+    @NotNull(message = "Date of joining cannot be null")
+    @PastOrPresent(message = "DateOfJoining field in Employee cannot be in the future")
+    private LocalDate dateOfJoining;
+
+    @AssertTrue(message = "Employee should be active")
+    //    @JsonProperty("isActive")
+    private Boolean isActive; // we can give any name
 }

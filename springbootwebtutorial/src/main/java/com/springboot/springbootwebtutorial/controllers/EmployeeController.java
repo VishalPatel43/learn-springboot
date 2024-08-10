@@ -1,15 +1,16 @@
 package com.springboot.springbootwebtutorial.controllers;
 
 import com.springboot.springbootwebtutorial.dto.EmployeeDTO;
-import com.springboot.springbootwebtutorial.entity.EmployeeEntity;
-import com.springboot.springbootwebtutorial.repositories.EmployeeRepository;
 import com.springboot.springbootwebtutorial.services.EmployeeService;
-import org.modelmapper.ModelMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 // Neither Entity or Repository is defined in the Controller Layer
@@ -55,36 +56,54 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable(name = "employeeId") Long id) {
-        return employeeService.getEmployeeById(id);
+//    public ResponseEntity<Object> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
+//    public ResponseEntity<?> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
+        Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(id);
+
+//        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
+//        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElseGet(() -> ResponseEntity.notFound().build());
+//        return employeeDTO
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build()
+//                );
+        return employeeDTO
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build()
+                );
     }
 
     @GetMapping
-    public List<EmployeeDTO> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
+    // @Valid is used to validate the input data which is coming from the client side
+    // WE define this valid in the DTO class
     @PostMapping
-    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee) {
-        return employeeService.createNewEmployee(inputEmployee);
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody @Valid EmployeeDTO inputEmployee) {
+        EmployeeDTO employeeDTO = employeeService.createNewEmployee(inputEmployee);
+        return new ResponseEntity<>(employeeDTO, HttpStatus.CREATED); // we can use different types of status codes we use this method
     }
 
     @PutMapping(path = "/{employeeId}")
-    public EmployeeDTO updateEmployeeById(@RequestBody EmployeeDTO employeeDTO,
-                                          @PathVariable Long employeeId) {
-        return employeeService.updateEmployeeById(employeeId, employeeDTO);
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody @Valid EmployeeDTO employeeDTO,
+                                                          @PathVariable Long employeeId) {
+        return ResponseEntity.ok(employeeService.updateEmployeeById(employeeId, employeeDTO));
     }
 
     @DeleteMapping(path = "/{employeeId}")
-    public boolean deleteEmployeeById(@PathVariable Long employeeId) {
-        return employeeService.deleteEmployeeById(employeeId);
+    public ResponseEntity<Boolean> deleteEmployeeById(@PathVariable Long employeeId) {
+        boolean gotDeleted = employeeService.deleteEmployeeById(employeeId);
+        if (gotDeleted) return ResponseEntity.ok(true);
+        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping(path = "/{employeeId}")
-    public EmployeeDTO updatePartialEmployeeById(@RequestBody Map<String, Object> updates,
-                                                 @PathVariable Long employeeId) {
-        return employeeService.updatePartialEmployeeById(employeeId, updates);
+    public ResponseEntity<EmployeeDTO> updatePartialEmployeeById(@RequestBody Map<String, Object> updates,
+                                                                 @PathVariable Long employeeId) {
+        EmployeeDTO employeeDTO = employeeService.updatePartialEmployeeById(employeeId, updates);
+        if (employeeDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(employeeDTO);
     }
-
-
 }

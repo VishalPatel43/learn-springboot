@@ -12,12 +12,14 @@ public class EmployeeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    String name;
-    String email;
-    Integer age;
-    LocalDate dateOfJoining;
+    private Long id;
+    private String name;
+    private String email;
+    private Integer age;
+    private String role;
+    private Double salary;
+    private LocalDate dateOfJoining;
     //    @JsonProperty("isActive")
-    Boolean isActive;
+    private Boolean isActive;
 
 }

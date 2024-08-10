@@ -30,22 +30,34 @@ public class EmployeeService {
     }
 
     // Business Logic
-    public EmployeeDTO getEmployeeById(Long id) {
-        EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
-        if (employeeEntity == null)
-            throw new ResourceNotFoundException("Employee not found with id: " + id);
+    public Optional<EmployeeDTO> getEmployeeById(Long id) {
 
-        return modelMapper.map(employeeEntity, EmployeeDTO.class);
+        // 1
+//        Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(id);
+//        EmployeeDTO employeeDTO = modelMapper.map(employeeEntity, EmployeeDTO.class);
+//        Optional<EmployeeDTO> optionalEmployeeDTO = Optional.of(employeeDTO);
+//        return optionalEmployeeDTO;
+
+        // 2
+//        Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(id);
+//        return employeeEntity.map(employeeEntity1 -> modelMapper.map(employeeEntity1, EmployeeDTO.class));
+
+        // 3
+        return employeeRepository
+                .findById(id)
+                .map(employeeEntity -> modelMapper // Convert to the Optional<EmployeeDTO>
+                        .map(employeeEntity, EmployeeDTO.class) // this is the mapping of the Entity to DTO
+                );
     }
 
     public List<EmployeeDTO> getAllEmployees() {
         List<EmployeeEntity> employeeEntities = employeeRepository.findAll();
         return employeeEntities
                 .stream()
-                .map(employeeEntity -> modelMapper.map(employeeEntity, EmployeeDTO.class))
+                .map(employeeEntity -> modelMapper
+                        .map(employeeEntity, EmployeeDTO.class))
                 .collect(Collectors.toList());
 //                .toList();
-
     }
 
     public EmployeeDTO createNewEmployee(EmployeeDTO inputEmployee) {
@@ -81,12 +93,12 @@ public class EmployeeService {
         boolean isExists = isExistsByEmployeeId(employeeId);
         if (!isExists) return null;
 
-//        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElse(null);
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElse(null);
 //        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
-        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Employee not found with id: " + employeeId)
-                );
+//        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId)
+//                .orElseThrow(() -> new ResourceNotFoundException(
+//                        "Employee not found with id: " + employeeId)
+//                );
         updates.forEach((field, value) -> {
             Field fieldTobeUpdated = ReflectionUtils.findField(EmployeeEntity.class, field);
             fieldTobeUpdated.setAccessible(true); // to access the private fields in Entity class with Reflection and without getter and setter methods

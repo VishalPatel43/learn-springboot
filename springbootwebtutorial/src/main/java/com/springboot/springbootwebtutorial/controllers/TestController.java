@@ -30,6 +30,8 @@ public class TestController {
                 "Vishal Patel",
                 "vishal@gmail.com",
                 25,
+                "",
+                0.0,
                 LocalDate.of(2021, 1, 1),
                 true);
     }
