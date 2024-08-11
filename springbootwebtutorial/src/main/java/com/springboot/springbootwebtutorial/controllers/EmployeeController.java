@@ -1,6 +1,7 @@
 package com.springboot.springbootwebtutorial.controllers;
 
 import com.springboot.springbootwebtutorial.dto.EmployeeDTO;
+import com.springboot.springbootwebtutorial.exceptions.ResourceNotFoundException;
 import com.springboot.springbootwebtutorial.services.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -55,22 +57,50 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
+    // Only use with in this controller
+//    @ExceptionHandler(NoSuchElementException.class)
+//    public ResponseEntity<String> handleEmployeeNotFound(NoSuchElementException exception) {
+////        return ResponseEntity
+////                .status(HttpStatus.NOT_FOUND)
+////                .body(exception.getMessage());
+//        return new ResponseEntity<>(
+////                exception.getMessage(), // Message is what we throw the exception
+//                "Employee not found",
+//                HttpStatus.NOT_FOUND
+//        );
+//
+//    }
+
     @GetMapping(path = "/{employeeId}")
 //    public ResponseEntity<Object> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
 //    public ResponseEntity<?> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
         Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(id);
 
+        return employeeDTO
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id)
+                );
+//        return employeeDTO
+//                .map(ResponseEntity::ok)
+//                .orElseThrow(() -> new NoSuchElementException("Employee not found with id: " + id)
+//                );
+        // 1
 //        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
+
+        // 2
 //        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElseGet(() -> ResponseEntity.notFound().build());
 //        return employeeDTO
 //                .map(ResponseEntity::ok)
 //                .orElseGet(() -> ResponseEntity.notFound().build()
 //                );
-        return employeeDTO
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()
-                );
+        // 3
+//        return employeeDTO
+//                .map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build()
+//                );
+
+
     }
 
     @GetMapping

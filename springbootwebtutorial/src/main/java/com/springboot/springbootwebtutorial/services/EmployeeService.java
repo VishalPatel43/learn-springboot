@@ -2,10 +2,10 @@ package com.springboot.springbootwebtutorial.services;
 
 import com.springboot.springbootwebtutorial.dto.EmployeeDTO;
 import com.springboot.springbootwebtutorial.entity.EmployeeEntity;
+import com.springboot.springbootwebtutorial.exceptions.ResourceNotFoundException;
 import com.springboot.springbootwebtutorial.repositories.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -67,20 +67,19 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(Long employeeId, EmployeeDTO employeeDTO) {
+        isExistsByEmployeeId(employeeId);
         EmployeeEntity employeeEntity = modelMapper.map(employeeDTO, EmployeeEntity.class);
-        employeeEntity.setId(employeeId);
-        // If it's present then it will update the record otherwise it will create new employee
         EmployeeEntity savedEmployeeEntity = employeeRepository.save(employeeEntity);
         return modelMapper.map(savedEmployeeEntity, EmployeeDTO.class);
     }
 
-    public boolean isExistsByEmployeeId(Long employeeId) {
-        return employeeRepository.existsById(employeeId);
+    public void isExistsByEmployeeId(Long employeeId) {
+        boolean isExists = employeeRepository.existsById(employeeId);
+        if (!isExists) throw new ResourceNotFoundException("Employee not found with id: " + employeeId);
     }
 
     public boolean deleteEmployeeById(Long employeeId) {
-        boolean isExists = isExistsByEmployeeId(employeeId);
-        if (!isExists) return false;
+        isExistsByEmployeeId(employeeId);
         employeeRepository.deleteById(employeeId);
         return true;
     }
@@ -90,9 +89,7 @@ public class EmployeeService {
     // directly with help of Reflection
     // using reflection we inversely update the field value directly
     public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String, Object> updates) {
-        boolean isExists = isExistsByEmployeeId(employeeId);
-        if (!isExists) return null;
-
+        isExistsByEmployeeId(employeeId);
         EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElse(null);
 //        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
 //        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId)
