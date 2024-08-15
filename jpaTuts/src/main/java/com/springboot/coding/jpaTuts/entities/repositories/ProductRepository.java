@@ -1,6 +1,8 @@
 package com.springboot.coding.jpaTuts.entities.repositories;
 
 import com.springboot.coding.jpaTuts.entities.ProductEntity;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -50,5 +52,13 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     // This is for sorting
     List<ProductEntity> findByTitleOrderByPrice(String title);
+
+    List<ProductEntity> findByOrderByPrice();
+
+    // Sort
+    List<ProductEntity> findBy(Sort sort);
+
+    // Pageable Pass Query parameter (We pass Sort in Sort)
+    List<ProductEntity> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
 }
