@@ -23,7 +23,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         if (body instanceof ApiResponse<?>)
             return body;
 
-        // All Response will be wrapped with ApiResponse
+        // All the Response will be wrapped with ApiResponse
         return new ApiResponse<>(body);
     }
 }

@@ -14,7 +14,7 @@ import java.io.StringWriter;
 import java.util.List;
 
 @RestControllerAdvice
-public class GlobalResponseHandlerOptimized {
+public class GlobalExceptionHandlerOptimized {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<?>> handleResourceNotFound(ResourceNotFoundException exception,
@@ -22,7 +22,7 @@ public class GlobalResponseHandlerOptimized {
 
         return buildErrorResponseEntity(exception,
                 HttpStatus.NOT_FOUND,
-                exception.getMessage(),
+                exception.getMessage(), // exception.getLocalizedMessage()
                 request,
                 null
         );

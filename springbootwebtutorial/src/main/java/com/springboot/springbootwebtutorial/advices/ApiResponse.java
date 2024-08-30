@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL) // This will exclude null fields from the response
 public class ApiResponse<T> {
 
-    // write time in 24 hours format
+    // write time in 24-hours format
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime timeStamp;
 
