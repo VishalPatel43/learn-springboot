@@ -1,28 +1,20 @@
 package com.springboot.coding.prod_ready_features.advice;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL) // This will exclude null fields from the response
 public class ApiError {
 
-
-    // Date and time format
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime localDateTime;
-    private String error;
-    private HttpStatus statusCode;
-
-    public ApiError() {
-        this.localDateTime = LocalDateTime.now();
-    }
-
-    public ApiError(String error, HttpStatus statusCode) {
-        this();
-        this.error = error;
-        this.statusCode = statusCode;
-    }
+    private HttpStatus status;
+    private Integer statusCode;
+    private String message;
+    private List<String> subErrors;
+    private String trace;
 }
