@@ -1,6 +1,7 @@
 package com.springboot.coding.prod_ready_features.advice;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -14,13 +15,20 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
     // Support each and every response
     @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(MethodParameter returnType,
+                            Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof ApiResponse<?>)
+    public Object beforeBodyWrite(Object body,
+                                  MethodParameter returnType,
+                                  MediaType selectedContentType,
+                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  ServerHttpRequest request,
+                                  ServerHttpResponse response) {
+//        if (body instanceof ApiResponse<?>)
+        if (body instanceof ApiResponse<?> || body instanceof RepresentationModel<?>)
             return body;
 
         // All the Response will be wrapped with ApiResponse
