@@ -31,6 +31,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         if (body instanceof ApiResponse<?> || body instanceof RepresentationModel<?>)
             return body;
 
+        // Exclude /v3/api-docs endpoint from being wrapped
+        if (request.getURI().getPath().contains("/v3/api-docs"))
+            return body;
         // All the Response will be wrapped with ApiResponse
         return new ApiResponse<>(body);
     }

@@ -12,6 +12,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostController {
 
+    //    Swagger: https://springdoc.org/
+    //    http://localhost:9000/v3/api-docs
+    //    http://localhost:9000/swagger-ui.html
     private final PostService postService;
 
     @GetMapping
