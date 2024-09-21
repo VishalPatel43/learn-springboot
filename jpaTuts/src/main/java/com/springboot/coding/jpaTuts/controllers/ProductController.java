@@ -1,7 +1,7 @@
 package com.springboot.coding.jpaTuts.controllers;
 
 import com.springboot.coding.jpaTuts.entities.ProductEntity;
-import com.springboot.coding.jpaTuts.entities.repositories.ProductRepository;
+import com.springboot.coding.jpaTuts.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

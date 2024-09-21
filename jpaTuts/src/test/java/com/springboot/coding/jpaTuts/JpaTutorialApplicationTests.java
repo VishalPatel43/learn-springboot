@@ -1,14 +1,12 @@
 package com.springboot.coding.jpaTuts;
 
 import com.springboot.coding.jpaTuts.entities.ProductEntity;
-import com.springboot.coding.jpaTuts.entities.repositories.ProductRepository;
+import com.springboot.coding.jpaTuts.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 

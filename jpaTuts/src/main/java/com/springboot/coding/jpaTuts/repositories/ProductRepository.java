@@ -1,4 +1,4 @@
-package com.springboot.coding.jpaTuts.entities.repositories;
+package com.springboot.coding.jpaTuts.repositories;
 
 import com.springboot.coding.jpaTuts.entities.ProductEntity;
 import org.springframework.data.domain.Pageable;
