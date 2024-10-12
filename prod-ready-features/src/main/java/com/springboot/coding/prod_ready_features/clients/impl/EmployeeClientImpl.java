@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import javax.management.RuntimeErrorException;
 import java.util.List;
 
 @Service
