@@ -1,6 +1,7 @@
-package com.springboot.coding.securityApplication.configs;
+package com.springboot.coding.securityApplication.auth;
 
 import com.springboot.coding.securityApplication.entities.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,13 +20,19 @@ public class CustomUserDetails implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private final Long userId;
+
     private final String username;
 
     private final String password;
 
     private final Set<GrantedAuthority> authorities;
 
+//    private User user;
+
     public CustomUserDetails(User user) {
+//        this.user = user;
+        this.userId = user.getUserId();
         this.username = user.getEmail();
         this.password = user.getPassword();
         this.authorities = user.getRoles().stream()
