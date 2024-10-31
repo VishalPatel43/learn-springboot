@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,6 +65,19 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Handler for AccessDeniedException to catch 403 errors
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException exception,
+                                                                      WebRequest request) {
+        return buildErrorResponseEntity(exception,
+                HttpStatus.FORBIDDEN,
+                "Access is denied. You do not have permission to access this resource.",
+                request,
+                null
+        );
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleInputValidationErrors(MethodArgumentNotValidException exception,
                                                                       WebRequest request) {
@@ -82,7 +96,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleInternalServerError(Exception exception,
                                                                     WebRequest request) {
@@ -96,7 +109,8 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ApiResponse<?>> buildErrorResponseEntity(
             Exception exception,
-            HttpStatus status, String message,
+            HttpStatus status,
+            String message,
             WebRequest request,
             List<String> subErrors
     ) {
@@ -106,7 +120,7 @@ public class GlobalExceptionHandler {
 
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
-        String trace = sw.toString();
+//        String trace = sw.toString();
 
         ApiError apiError = ApiError.builder()
                 .status(status)

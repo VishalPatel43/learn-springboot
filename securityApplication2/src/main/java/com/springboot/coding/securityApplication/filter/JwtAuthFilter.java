@@ -1,6 +1,6 @@
 package com.springboot.coding.securityApplication.filter;
 
-import com.springboot.coding.securityApplication.services.JWTUtil;
+import com.springboot.coding.securityApplication.services.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +23,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final String CLASS_NAME = "JwtAuthFilter";
-    private final JWTUtil jwtUtil;
+    private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
 
     //    @Autowired
@@ -64,12 +64,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 
             final String token = requestTokenHeader.split("Bearer ")[1];
-            final String username = jwtUtil.extractUsername(token);
+            final String username = jwtService.extractUsername(token);
 
             // If username is extracted and SecurityContext is not yet set
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (jwtUtil.validateToken(token, username, userDetails)) {
+                if (jwtService.validateToken(token, username, userDetails)) {
                     // Log user details for debugging
                     System.out.println("Authenticated user: " + userDetails.getUsername());
                     System.out.println("Authorities: " + userDetails.getAuthorities());

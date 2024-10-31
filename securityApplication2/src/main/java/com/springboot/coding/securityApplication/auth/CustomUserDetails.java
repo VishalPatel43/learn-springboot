@@ -1,7 +1,6 @@
 package com.springboot.coding.securityApplication.auth;
 
 import com.springboot.coding.securityApplication.entities.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,6 +52,16 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomUserDetails{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", authorities=" + authorities +
+                '}';
     }
 
     // other method we remove it coz there is default value store in UserDetails interface, here no need to implement it

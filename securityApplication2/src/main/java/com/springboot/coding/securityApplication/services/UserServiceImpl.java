@@ -62,8 +62,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByEmail(String username) {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with email " + username + " not found"));
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with ID " + userId + " not found"));
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+//                .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
+    }
+
+    @Override
+    public User save(User newUser) {
+//            String password = newUser.getPassword();
+//            if (password != null && !password.isBlank()) {
+        //            password = passwordEncoder.encode("some default password for OAuth2 users");
+        //            newUser.setPassword(password);
+        return userRepository.save(newUser);
     }
 }

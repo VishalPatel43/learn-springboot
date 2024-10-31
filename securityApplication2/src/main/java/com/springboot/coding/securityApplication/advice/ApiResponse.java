@@ -13,7 +13,6 @@ public class ApiResponse<T> {
     // write time in 24-hours format
     @JsonFormat(pattern = "HH:mm:ss dd-MM-yyyy")
     private LocalDateTime timeStamp;
-
     // either data or error will be null
     private T data;
     private ApiError error;

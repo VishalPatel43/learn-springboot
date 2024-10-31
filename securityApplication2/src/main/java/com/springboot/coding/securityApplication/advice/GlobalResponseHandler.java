@@ -1,5 +1,6 @@
 package com.springboot.coding.securityApplication.advice;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.util.List;
 
 // It will be applied to all the controllers with the ResponseBody
+@Slf4j
 @RestControllerAdvice
 public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
@@ -41,6 +43,12 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
                 isAllowed
         )
             return body;
-        return new ApiResponse<>(body);
+        // Create a new ApiResponse
+        log.info("Creating ApiResponse for the response");
+        log.info("Body: {}", body);
+        ApiResponse<Object> apiResponse = new ApiResponse<>(body);
+        apiResponse.setPath(request.getURI().getPath()); // Set the path in the response
+        log.info("Api Response created: {}", apiResponse);
+        return apiResponse;
     }
 }
