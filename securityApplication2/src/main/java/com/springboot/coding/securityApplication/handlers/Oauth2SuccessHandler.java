@@ -58,7 +58,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             User newUser = User.builder()
                     .name(name)
                     .email(email)
-                    .password(passwordEncoder.encode(passwordUtil.generateRandomPassword()))
+//                    .password(passwordEncoder.encode(passwordUtil.generateRandomPassword()))
                     .roles(Set.of(Role.USER))
                     .build();
             user = userService.save(newUser);
@@ -84,6 +84,4 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //        getRedirectStrategy().sendRedirect(request, response, frontEndUrl);
         log.info("Return from sendRedirect");
     }
-
-
 }

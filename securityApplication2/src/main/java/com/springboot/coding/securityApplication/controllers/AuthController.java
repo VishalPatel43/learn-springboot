@@ -8,6 +8,7 @@ import com.springboot.coding.securityApplication.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,12 @@ public class AuthController {
     private String deployEnv;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDTO> signUp(@RequestBody SignUpDTO signUpDTO) {
+    public ResponseEntity<UserDTO> signUp(@RequestBody @Valid SignUpDTO signUpDTO) {
         return ResponseEntity.ok(userService.signUp(signUpDTO));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO,
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginDTO loginDTO,
                                                   HttpServletResponse response) {
 
         LoginResponseDTO loginResponseDTO = authService.login(loginDTO);

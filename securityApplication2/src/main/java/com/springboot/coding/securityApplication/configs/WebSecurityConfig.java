@@ -1,6 +1,5 @@
 package com.springboot.coding.securityApplication.configs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.coding.securityApplication.advice.CustomAccessDeniedHandler;
 import com.springboot.coding.securityApplication.entities.enums.Role;
 import com.springboot.coding.securityApplication.filter.JwtAuthFilter;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,9 +30,7 @@ public class WebSecurityConfig {
     private final LoggingFilter loggingFilter;
     private final CorsConfigurationSource corsConfigurationSource;
     private final Oauth2SuccessHandler oauth2SuccessHandler;
-    private final ObjectMapper objectMapper;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-
 
 
     private static final String[] publicRoutes = {
@@ -58,7 +56,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicRoutes)
                         .permitAll()
-                        .requestMatchers("/posts/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())  // Restrict all `/admin/**` routes to users with ADMIN role
+                        .requestMatchers("/users/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name(), Role.CREATOR.name())
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyRole(Role.ADMIN.name(), Role.CREATOR.name())
                         .anyRequest().authenticated())
 
                 // no need to explicitly add the authentication provider as we create a bean in AppConfig
@@ -66,32 +67,10 @@ public class WebSecurityConfig {
                 .addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class) // Add logging filter before JWT filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before authentication filter
                 .oauth2Login(oauth2Config -> oauth2Config
-                        .failureUrl("/login?error=true")
+                        .failureUrl("/login?error=true") // login page on failure
                         .successHandler(oauth2SuccessHandler))  // Enable OAuth2 login
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                                .accessDeniedHandler(customAccessDeniedHandler)
-                        /*
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                    // Set 403 status and JSON content type
-                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-                                    // Create a custom JSON error response
-                                    ApiError apiError = ApiError.builder()
-                                            .status(HttpStatus.FORBIDDEN)
-                                            .statusCode(HttpServletResponse.SC_FORBIDDEN)
-                                            .message(accessDeniedException.getLocalizedMessage())
-                                            .build();
-
-                                    ApiResponse<ApiError> apiResponse = new ApiResponse<>(apiError);
-                                    apiResponse.setPath(request.getRequestURI());
-
-                                    // Write JSON error details to response
-                                    objectMapper.writeValue(response.getWriter(), apiResponse);
-                                })
-                                */
-
-
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 );
         return httpSecurity.build();
     }
