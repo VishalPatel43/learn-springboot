@@ -1,6 +1,5 @@
-package com.springboot.coding.securityApplication.auth;
+package com.springboot.coding.securityApplication.services;
 
-import com.springboot.coding.securityApplication.entities.User;
 import com.springboot.coding.securityApplication.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,10 +18,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = userRepository
+        return userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("User not found with email: " + email));
-
-        return new CustomUserDetails(user);
     }
 }

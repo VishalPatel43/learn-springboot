@@ -3,10 +3,18 @@ package com.springboot.coding.securityApplication.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springboot.coding.securityApplication.entities.enums.Role;
+import com.springboot.coding.securityApplication.entities.enums.SubscriptionPlan;
+import com.springboot.coding.securityApplication.utils.PermissionMapping;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users",
@@ -17,27 +25,21 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@ToString(exclude = "password")
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column(nullable = false, unique = true)
-//    @Email(message = "Email should be valid")
-//    @NotBlank(message = "Email is mandatory")
     private String email; // Username for authentication
 
-//    @Column(nullable = false)
-//    @NotBlank(message = "Password is mandatory")
-//    @Size(min = 4, message = "Password should have at least 4 characters")
     @JsonIgnore // Prevent password from being serialized
     private String password;
 
     @Column(nullable = false)
-//    @NotBlank(message = "Name is mandatory")
     private String name;
-
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -46,20 +48,38 @@ public class User {
     @Column(name = "role")
     private Set<Role> roles;
 
-    /* extra info
-    private String address;
-    private String gender;
-    private String phoneNo;
-    private String dob;*/
+    @Enumerated(EnumType.STRING)
+    private SubscriptionPlan subscriptionPlan;
 
     @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", roles=" + roles +
-                '}';
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        // Approach 1
+        return roles.stream()
+                .flatMap(role -> Stream.concat(
+                        PermissionMapping.getAuthoritiesForRole(role).stream(),
+                        Stream.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
+                ))
+                .collect(Collectors.toSet());
+
+        /* Approach 2
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        roles.forEach(role -> {
+            Set<SimpleGrantedAuthority> permissions = PermissionMapping.getAuthoritiesForRole(role);
+            authorities.addAll(permissions);
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        });
+        return authorities;
+        */
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 }

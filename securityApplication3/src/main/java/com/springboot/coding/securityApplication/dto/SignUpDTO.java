@@ -2,6 +2,7 @@ package com.springboot.coding.securityApplication.dto;
 
 import com.springboot.coding.securityApplication.annotations.UserRoleValidation;
 import com.springboot.coding.securityApplication.entities.enums.Role;
+import com.springboot.coding.securityApplication.entities.enums.SubscriptionPlan;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,5 +27,7 @@ public class SignUpDTO {
 
     @UserRoleValidation
     private Set<Role> roles;
+
+    private SubscriptionPlan subscriptionPlan;
 
 }

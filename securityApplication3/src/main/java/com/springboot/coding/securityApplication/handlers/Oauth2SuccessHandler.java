@@ -1,11 +1,9 @@
 package com.springboot.coding.securityApplication.handlers;
 
-import com.springboot.coding.securityApplication.auth.CustomUserDetails;
 import com.springboot.coding.securityApplication.entities.User;
 import com.springboot.coding.securityApplication.entities.enums.Role;
 import com.springboot.coding.securityApplication.services.JWTService;
 import com.springboot.coding.securityApplication.services.UserService;
-import com.springboot.coding.securityApplication.utils.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -23,6 +20,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Set;
 
+import static com.springboot.coding.securityApplication.entities.enums.Role.USER;
+import static com.springboot.coding.securityApplication.entities.enums.SubscriptionPlan.FREE;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -30,8 +30,6 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final UserService userService;
     private final JWTService jwtService;
-    private final PasswordUtil passwordUtil;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${deploy.env}")
     private String deployEnv;
@@ -54,34 +52,34 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         User user = userService.getUserByEmail(email);
 
-        if (user == null) {
-            User newUser = User.builder()
-                    .name(name)
-                    .email(email)
-//                    .password(passwordEncoder.encode(passwordUtil.generateRandomPassword()))
-                    .roles(Set.of(Role.USER))
-                    .build();
-            user = userService.save(newUser);
-        }
+        if (user == null)
+            user = createUser(email, name);
 
-        log.info("User: {}", user);
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-        log.info("CustomUserDetails: {}", customUserDetails);
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
-        String accessToken = jwtService.generateAccessToken(customUserDetails);
-        String refreshToken = jwtService.generateRefreshToken(customUserDetails);
+        setRefreshTokenCookie(response, refreshToken);
 
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure("production".equals(deployEnv));
-        response.addCookie(cookie);
-
-//        response.sendRedirect("http://localhost:3000");
         String frontEndUrl = "http://localhost:8080/api/home.html?token=" + accessToken;
-//        response.sendRedirect("http://localhost:3000?accessToken=" + accessToken + "&refreshToken=" + refreshToken);
         log.info("FrontEndUrl: {}", frontEndUrl);
         response.sendRedirect(frontEndUrl);
 //        getRedirectStrategy().sendRedirect(request, response, frontEndUrl);
-        log.info("Return from sendRedirect");
+    }
+
+    private User createUser(String email, String name) {
+        return userService.save(User.builder()
+                .name(name)
+                .email(email)
+                .roles(Set.of(USER))
+                .subscriptionPlan(FREE)
+                .build());
+    }
+
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure("production".equals(deployEnv));
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

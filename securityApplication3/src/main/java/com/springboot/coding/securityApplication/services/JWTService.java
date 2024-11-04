@@ -1,21 +1,17 @@
 package com.springboot.coding.securityApplication.services;
 
-import com.springboot.coding.securityApplication.auth.CustomUserDetails;
-import com.springboot.coding.securityApplication.entities.enums.Role;
+import com.springboot.coding.securityApplication.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class JWTService {
@@ -40,23 +36,18 @@ public class JWTService {
     }
 
     // Generate access token for user with 10 minutes validity
-    public String generateAccessToken(CustomUserDetails customUserDetails) {
+    public String generateAccessToken(User user) {
         Map<String, Object> claims = Map.of(
-                "email", customUserDetails.getUsername(),
-                "userId", customUserDetails.getUserId(),
-                "roles", customUserDetails.getAuthorities().stream()
-//                        .map(GrantedAuthority::getAuthority)
-                        .map(grantedAuthority -> grantedAuthority.getAuthority().replace("ROLE_", ""))  // Remove "ROLE_"
-                        .collect(Collectors.toList())
-        );
-        return createToken(claims, customUserDetails.getUserId().toString(), 1000L * 60 * 60);  // 60 minutes validity
+                "email", user.getUsername(),
+                "roles", user.getRoles().toString());
+        return createToken(claims, user.getUserId().toString(), 1000L * 60 * 60);  // 60 minutes validity
     }
 
     // Generate refresh token for user with 6 months validity
-    public String generateRefreshToken(CustomUserDetails customUserDetails) {
+    public String generateRefreshToken(User user) {
         return createToken(
                 Map.of(),
-                customUserDetails.getUserId().toString(),
+                user.getUserId().toString(),
                 1000L * 60 * 60 * 24 * 30 * 6
         );  // 6 months validity
     }
@@ -103,36 +94,9 @@ public class JWTService {
         return extractExpiration(token).before(new Date());
     }
 
-    // Validate JWT token with user details
-    public Boolean validateToken(String token, String username, UserDetails userDetails) {
-//        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-
     // Validate the JWT token with UserDetails
-    public boolean validateToken(String token, CustomUserDetails customUserDetails) {
+    public boolean validateToken(String token, User user) {
         String email = extractEmail(token);
-        return (email.equals(customUserDetails.getUsername()) && !isTokenExpired(token));
-    }
-
-    private List<?> extractRawRoles(String token) {
-        return extractClaim(token, claims -> claims.get("roles", List.class));
-    }
-
-    // Extract roles from the token
-    public List<String> extractRolesAsListOfString(String token) {
-        return extractRawRoles(token)
-                .stream()
-                .map(Object::toString)  // Convert each element to String
-                .collect(Collectors.toList());
-    }
-
-    public List<Role> extractRolesAsEnum(String token) {
-
-        return extractRawRoles(token)
-                .stream()
-                .map(Object::toString)  // Convert each element to String
-                .map(Role::valueOf)      // Convert each String to a Role enum
-                .collect(Collectors.toList());
+        return (email.equals(user.getUsername()) && !isTokenExpired(token));
     }
 }

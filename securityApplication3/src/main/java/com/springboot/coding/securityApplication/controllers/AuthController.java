@@ -1,7 +1,6 @@
 package com.springboot.coding.securityApplication.controllers;
 
 import com.springboot.coding.securityApplication.dto.*;
-import com.springboot.coding.securityApplication.entities.User;
 import com.springboot.coding.securityApplication.services.AuthService;
 import com.springboot.coding.securityApplication.services.SessionService;
 import com.springboot.coding.securityApplication.services.UserService;
@@ -42,11 +41,12 @@ public class AuthController {
         Cookie cookie = new Cookie("refreshToken", loginResponseDTO.getRefreshToken());
         cookie.setHttpOnly(true);
         cookie.setSecure("production".equals(deployEnv));
-//        cookie.setPath("/");
-//        cookie.setMaxAge(60 * 60 * 24 * 7); // 7 days
+        cookie.setPath("/");
+//        cookie.setMaxAge(60 * 60 * 24 * 7); // 7 days*/
         response.addCookie(cookie);
         return ResponseEntity.ok(loginResponseDTO);
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponseDTO> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -57,23 +57,22 @@ public class AuthController {
                 .map(Cookie::getValue)
                 .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found in cookies"));
 
-        // Delete the session associated with the refresh token
-        sessionService.deleteSessionByRefreshToken(refreshToken);
+        authService.logout(refreshToken);
 
         // Clear the refreshToken cookie
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
         cookie.setSecure("production".equals(deployEnv));
         cookie.setMaxAge(0); // Set max age to 0 to delete the cookie
+        cookie.setPath("/"); // Ensure the correct cookie is removed
         response.addCookie(cookie);
 
         LogoutResponseDTO logoutResponseDTO = new LogoutResponseDTO("Logout successful");
         return ResponseEntity.ok(logoutResponseDTO);
     }
 
-
     @PostMapping("/refresh")
-    public ResponseEntity<LoginResponseDTO> refresh(HttpServletRequest request) {
+    public ResponseEntity<LoginResponseDTO> refresh(HttpServletRequest request, HttpServletResponse response) {
 //        Cookie[] cookies = request.getCookies();
         String refreshToken = Arrays.stream(request.getCookies())
                 .filter(cookie -> "refreshToken".equals(cookie.getName()))
@@ -82,11 +81,21 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("Refresh token not found inside the Cookies"));
 
         LoginResponseDTO loginResponseDTO = authService.refreshToken(refreshToken);
+
+        // Update refresh token cookie
+        Cookie cookie = new Cookie("refreshToken", loginResponseDTO.getRefreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure("production".equals(deployEnv));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
         return ResponseEntity.ok(loginResponseDTO);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<User> getCurrentUser() {
-        return ResponseEntity.ok(userService.getCurrentUser());
+
+    @PostMapping("/logout-all")
+    public ResponseEntity<LogoutResponseDTO> logoutFromAllDevices() {
+        authService.logoutFromAllDevices();
+        return ResponseEntity.ok(new LogoutResponseDTO("Logout from all devices successful"));
     }
 }

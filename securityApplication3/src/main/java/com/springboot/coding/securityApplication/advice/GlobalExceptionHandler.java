@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND,
 //                exception.getMessage(),
                 exception.getLocalizedMessage(),
+//                "Requested resource not found.",
                 request,
                 null
         );
@@ -38,28 +39,25 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(exception,
                 HttpStatus.UNAUTHORIZED,
                 exception.getLocalizedMessage(),
+//                "Authentication failed. Please check your credentials.",
                 request,
                 null
         );
     }
 
     /*
-    When we get exception inside our controller, service
-        --> if handling of exception or context of this exception is under the dispatcher servlet then our global exception handler will handle it
-        --> if handling of exception or context of this exception is outside the dispatcher servlet then our global exception handler will not handle it
-        --> currently we go to the filter (JwtAuthFilter) and take it to another context basically we are going inside filter context, but we are not inside dispatcher servlet yet
-        --> After filter (JwtAuthFilter) done its magic our request will go to the dispatcher servlet
-        --> Global exception handler handle only dispatcher servlet exceptions
-        --> therefore we use the HandlerExceptionResolver inside the filter to handle exceptions
-        --> it will pass exception to one context to other context here servlet dispatcher context
-
-     */
+        Note on Filter Context Exceptions:
+        Exceptions thrown within filters (e.g., JwtAuthFilter) are outside the DispatcherServlet context.
+        They require the use of HandlerExceptionResolver to relay them to this handler.
+        JwtAuthFilter processes authentication before the DispatcherServlet, making this approach necessary.
+    */
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ApiResponse<?>> handleRuntimeException(JwtException exception,
                                                                  WebRequest request) {
         return buildErrorResponseEntity(exception,
                 HttpStatus.UNAUTHORIZED,
                 exception.getLocalizedMessage(),
+//                "Invalid or expired JWT token.",
                 request,
                 null
         );
@@ -72,11 +70,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(exception,
                 HttpStatus.FORBIDDEN,
                 "Access is denied. You do not have permission to access this resource.",
+//                exception.getLocalizedMessage(),
                 request,
                 null
         );
     }
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleInputValidationErrors(MethodArgumentNotValidException exception,
@@ -91,6 +89,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(exception,
                 HttpStatus.BAD_REQUEST,
                 "Input validation failed",
+//                exception.getLocalizedMessage(),
                 request,
                 errors
         );
@@ -102,6 +101,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponseEntity(exception,
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 exception.getMessage(),
+//                "An unexpected error occurred. Please try again later.",
                 request,
                 null
         );

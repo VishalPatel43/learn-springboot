@@ -17,18 +17,34 @@ import java.util.List;
 public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
-    private static final int SESSION_LIMIT = 2; // if subscription based service we can set the dynamic limit
+//    private static final int SESSION_LIMIT = 2; // if subscription based service we can set the dynamic limit
 
     @Override
+    @Transactional
     public void generateNewSession(User user, String refreshToken) {
-        List<Session> userSessions = sessionRepository.findByUser(user);
 
+        int sessionLimit = switch (user.getSubscriptionPlan()) {
+            case FREE -> 1;
+            case BASIC -> 2;
+            case PREMIUM -> 3;
+            default -> 4;
+        };
+
+        List<Session> userSessions = getUserSessions(user);
+
+        if (userSessions.size() >= sessionLimit) {
+            userSessions.sort(Comparator.comparing(Session::getLastUsedAt));
+            sessionRepository.delete(userSessions.getFirst());
+        }
+
+/*     when we have fixed limit
         if (userSessions.size() == SESSION_LIMIT) {
             // sort the sessions based on last used time
             userSessions.sort(Comparator.comparing(Session::getLastUsedAt));
             Session leastRecentlyUsedSession = userSessions.getFirst();
             sessionRepository.delete(leastRecentlyUsedSession);
         }
+*/
 /*
         * when we change the limit to dynamic
         * It will ensure that the user has only (SESSION_LIMIT - 1) sessions at a time
@@ -49,6 +65,7 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.save(newSession);
     }
 
+    @Transactional
     @Override
     public void validateSession(String refreshToken) {
 
@@ -63,9 +80,21 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     @Transactional
-    public void deleteSessionByRefreshToken(String refreshToken) {
+    public void removeSession(String refreshToken) {
         Session session = sessionRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new SessionAuthenticationException("Session not found for refreshToken: " + refreshToken));
         sessionRepository.deleteById(session.getSessionId());
+    }
+
+    @Override
+    public List<Session> getUserSessions(User user) {
+        return sessionRepository.findByUser(user);
+    }
+
+    @Transactional
+    @Override
+    public void logoutFromAllDevices(User user) {
+        List<Session> userSessions = sessionRepository.findByUser(user);
+        sessionRepository.deleteAll(userSessions);
     }
 }
