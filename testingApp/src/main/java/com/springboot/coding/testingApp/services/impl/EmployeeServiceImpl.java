@@ -62,12 +62,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO createNewEmployee(EmployeeDTO employeeDTO) {
         log.info("Creating new employee with email: {}", employeeDTO.getEmail());
 
+
+//        * Find employee by email and check if it already exists
         employeeRepository.findByEmail(employeeDTO.getEmail())
                 .ifPresent(existingEmployee -> {
                     log.error("Employee already exists with email: {}", employeeDTO.getEmail());
                     throw new RuntimeException("Employee already exists with email: " + employeeDTO.getEmail());
                 });
 
+/*
+        Optional<Employee> existingEmployee = employeeRepository.findByEmail(employeeDTO.getEmail());
+        if (existingEmployee.isPresent()) {
+            log.error("Employee already exists with email: {}", employeeDTO.getEmail());
+            throw new RuntimeException("Employee already exists with email: " + employeeDTO.getEmail());
+        }
+*/
         Employee newEmployee = modelMapper.map(employeeDTO, Employee.class);
         Employee savedEmployee = employeeRepository.save(newEmployee);
         log.info("Successfully created new employee with employeeId: {}", savedEmployee.getEmployeeId());
@@ -79,13 +88,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Updating employee with employeeId: {}", employeeId);
         Employee employee = getEmployeeById(employeeId);
 
+        if (!employeeDTO.getEmployeeId().equals(employeeId)) {
+            log.error("Mismatch between provided employeeId ({}) and EmployeeDTO.employeeId ({})", employeeId, employeeDTO.getEmployeeId());
+            throw new RuntimeException("The provided EmployeeDTO ID does not match the target employeeId.");
+        }
+
         if (!employee.getEmail().equals(employeeDTO.getEmail())) {
             log.error("Attempted to update email for employee with employeeId: {}", employeeId);
             throw new RuntimeException("The email of the employee cannot be updated");
         }
 
         modelMapper.map(employeeDTO, employee);
-//        employee.setEmployeeId(employeeId);
+        employee.setEmployeeId(employeeId); // ID was changed
 
         Employee savedEmployee = employeeRepository.save(employee);
         log.info("Successfully updated employee with employeeId: {}", employeeId);
