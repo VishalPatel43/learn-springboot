@@ -62,7 +62,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO createNewEmployee(EmployeeDTO employeeDTO) {
         log.info("Creating new employee with email: {}", employeeDTO.getEmail());
 
-
 //        * Find employee by email and check if it already exists
         employeeRepository.findByEmail(employeeDTO.getEmail())
                 .ifPresent(existingEmployee -> {
@@ -90,7 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (!employeeDTO.getEmployeeId().equals(employeeId)) {
             log.error("Mismatch between provided employeeId ({}) and EmployeeDTO.employeeId ({})", employeeId, employeeDTO.getEmployeeId());
-            throw new RuntimeException("The provided EmployeeDTO ID does not match the target employeeId.");
+            throw new IllegalArgumentException("The provided EmployeeDTO ID does not match the target employeeId.");
         }
 
         if (!employee.getEmail().equals(employeeDTO.getEmail())) {

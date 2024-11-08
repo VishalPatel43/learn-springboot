@@ -2,9 +2,9 @@ package com.springboot.coding.testingApp.configs;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
 public class AppConfig {
 
     @Bean

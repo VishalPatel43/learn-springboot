@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 //@SpringBootTest // load entire spring context --> web server, database, etc.
 //DataJpaTest, SpringBootTest --> so we can use the @Autowired annotation for bean
-@DataJpaTest
+@DataJpaTest // take default H2 database and load only JPA context, database related context
 // load only JPA context, database related context --> Load the H2 database default and don't use Postgres database
 // @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // it will replace the database with H2 and don't take credentials for postgres database    // it will replace the database with H2 and don't take credentials for postgres database
  @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)  // Not load the H2 database or otherwise remove the H2 database from pom file

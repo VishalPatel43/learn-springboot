@@ -1,6 +1,5 @@
 package com.springboot.coding.securityApplication.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springboot.coding.securityApplication.entities.enums.Role;
 import com.springboot.coding.securityApplication.entities.enums.SubscriptionPlan;

@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +13,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
+
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpMethod.*;
 
 @Slf4j
 @Configuration
@@ -50,19 +52,19 @@ public class AppConfig {
         ));
 //        config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedHeaders(List.of(
-                HttpHeaders.AUTHORIZATION,
-                HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT
+                AUTHORIZATION,
+                CONTENT_TYPE,
+                ACCEPT
         ));
 //        config.setAllowedMethods(Collections.singletonList("*")); // allow all methods => GET, POST, PUT, DELETE
         config.setAllowedMethods(List.of(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name()
+                GET.name(),
+                POST.name(),
+                PUT.name(),
+                DELETE.name()
         ));
 //        config.setExposedHeaders(List.of("Authorization"));
-        config.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
+        config.setExposedHeaders(List.of(AUTHORIZATION));
         config.setMaxAge(3600L); // 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -213,7 +213,7 @@ class EmployeeServiceImplTest {
 
         // act and assert
         assertThatThrownBy(() -> employeeService.updateEmployee(employeeId, mockEmployeeDTO))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("The provided EmployeeDTO ID does not match the target employeeId.");
 
         verify(employeeRepository).findById(randomEmployee.getEmployeeId());

@@ -31,11 +31,11 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException exception,
-                                                                  WebRequest request) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<?>> handleRuntimeException(IllegalArgumentException exception,
+                                                                 WebRequest request) {
         return buildErrorResponseEntity(exception,
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
 //                "An unexpected error occurred. Please try again later.",
                 request,
@@ -43,9 +43,10 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<?>> handleInternalServerError(Exception exception,
-                                                                    WebRequest request) {
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException exception,
+                                                                 WebRequest request) {
         return buildErrorResponseEntity(exception,
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 exception.getMessage(),
