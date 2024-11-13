@@ -6,7 +6,6 @@ import com.springboot.coding.securityApplication.services.PostService;
 import com.springboot.coding.securityApplication.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 //@Service
 @Component

@@ -53,6 +53,7 @@ public class WebSecurityConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF as we are using JWT
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless sessions with JWT
                 )

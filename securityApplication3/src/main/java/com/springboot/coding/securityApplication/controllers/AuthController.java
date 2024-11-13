@@ -23,7 +23,6 @@ public class AuthController {
 
     private final UserService userService;
     private final AuthService authService;
-    private final SessionService sessionService;
 
     @Value("${deploy.env}")
     private String deployEnv;

@@ -50,6 +50,7 @@ public class WebSecurityConfig {
                       log.info("CorsConfigurationSource bean injected");
                   })*/
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless sessions with JWT
                 )

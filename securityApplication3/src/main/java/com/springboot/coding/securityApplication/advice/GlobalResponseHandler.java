@@ -46,9 +46,12 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         // Create a new ApiResponse
         log.info("Creating ApiResponse for the response");
         log.info("Body: {}", body);
+
         ApiResponse<Object> apiResponse = new ApiResponse<>(body);
         apiResponse.setPath(request.getURI().getPath()); // Set the path in the response
+
         log.info("Api Response created: {}", apiResponse);
+
         return apiResponse;
     }
 }

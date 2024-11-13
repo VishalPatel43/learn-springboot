@@ -14,7 +14,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
 
@@ -26,7 +25,6 @@ public class AppConfig {
     public ModelMapper getModelMapper() {
         return new ModelMapper();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
